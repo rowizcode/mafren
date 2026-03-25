@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mafren Jewelry Atelier — Trang Sức Bạc Theo Yêu Cầu</title>
+    <meta name="description"
+        content="Mafren Jewelry Atelier. Studio thiết kế & chế tác trang sức bạc theo yêu cầu. Tối giản, tinh tế, khác biệt.">
+    <!-- Fonts: Space Grotesk (futuristic heading) + Inter (clean body) + Space Mono (tech accents) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+    <!-- Scanline CRT Overlay -->
+    <div class="scanline-overlay"></div>
+    <!-- Cursor Glow Follower -->
+    <div class="cursor-glow" id="cursor-glow"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <a href="#home" class="logo">
+            <span class="logo-text">MAFREN</span>
+            <span class="logo-tagline">JEWELRY ATELIER</span>
+        </a>
+        <div class="nav-links" id="nav-links">
+            <a href="#about">Giới thiệu</a>
+            <a href="#showcase">Sản phẩm</a>
+            <a href="#booking" class="btn-book">Đặt lịch hẹn</a>
+        </div>
+        <button class="menu-toggle" id="mobile-menu" aria-label="Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <video class="hero-video-bg" autoplay muted loop playsinline>
+            <source src="./public/video.mp4" type="video/mp4">
+        </video>
+        <div class="hero-bg-gradient"></div>
+        <div class="hero-content">
+            <p class="hero-eyebrow fade-in">JEWELRY DESIGN STUDIO</p>
+            <h1 class="hero-title">
+                <span class="fade-in delay-1">Năng lượng.</span>
+                <span class="fade-in delay-2">Độc bản.</span>
+                <span class="fade-in delay-3"><em>Khác biệt.</em></span>
+            </h1>
+            <p class="hero-subtitle fade-in delay-4">Trang sức bạc độc bản được chế tác thủ công hoàn toàn theo yêu cầu,
+                dành cho những ai trân trọng sự riêng biệt.</p>
+            <div class="hero-actions fade-in delay-5">
+                <a href="#showcase" class="btn btn-ghost">Khám phá 3D</a>
+                <a href="#booking" class="btn btn-gold">Đặt lịch hẹn</a>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator fade-in delay-5">
+            <div class="scroll-line"></div>
+            <span>Cuộn xuống</span>
+        </div>
+    </section>
+
+    <!-- Marquee Divider -->
+    <div class="marquee-divider">
+        <div class="marquee-track">
+            <span>Bạc 925 nguyên bản &nbsp;✦&nbsp; Chế tác thủ công &nbsp;✦&nbsp; Thiết kế theo yêu cầu &nbsp;✦&nbsp;
+                Độc bản &nbsp;✦&nbsp; Bạc 925 nguyên bản &nbsp;✦&nbsp; Chế tác thủ công &nbsp;✦&nbsp; Thiết kế theo yêu
+                cầu &nbsp;✦&nbsp; Độc bản &nbsp;✦&nbsp;</span>
+            <span>Bạc 925 nguyên bản &nbsp;✦&nbsp; Chế tác thủ công &nbsp;✦&nbsp; Thiết kế theo yêu cầu &nbsp;✦&nbsp;
+                Độc bản &nbsp;✦&nbsp; Bạc 925 nguyên bản &nbsp;✦&nbsp; Chế tác thủ công &nbsp;✦&nbsp; Thiết kế theo yêu
+                cầu &nbsp;✦&nbsp; Độc bản &nbsp;✦&nbsp;</span>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-header">
+                <p class="section-eyebrow">Về Chúng Tôi</p>
+                <h2 class="section-title">Triết lý của <em>Mafren</em></h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-text">
+                    <p class="about-lead">Mỗi món trang sức tại Mafren không chỉ là phụ kiện — mà là một câu chuyện được
+                        kể bằng bạc nguyên bản.</p>
+                    <p>Chúng tôi tôn trọng vẻ đẹp của sự tối giản, tập trung vào kỹ thuật chế tác thủ công tinh xảo. Từ
+                        ý tưởng đến hiện thực, chúng tôi đồng hành cùng bạn để tạo ra những tác phẩm mang đậm dấu ấn cá
+                        nhân, bền bỉ với thời gian.</p>
+                </div>
+                <div class="about-features">
+                    <div class="feature-card">
+                        <span class="feature-number">01</span>
+                        <h3>Chế tác thủ công</h3>
+                        <p>100% các công đoạn được thực hiện bằng tay tại atelier của chúng tôi.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-number">02</span>
+                        <h3>Thiết kế độc bản</h3>
+                        <p>Mỗi tác phẩm là duy nhất, được tạo ra dành riêng cho bạn.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-number">03</span>
+                        <h3>Bạc 925 nguyên chất</h3>
+                        <p>Chất liệu cao cấp, bền đẹp theo thời gian.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D Product Grid Section -->
+    <section id="showcase" class="showcase">
+        <div class="container">
+            <p class="section-eyebrow center">Bộ Sưu Tập</p>
+            <h2 class="section-title center">Khám phá <em>sản phẩm</em></h2>
+            <p class="section-subtitle center">Nhấn vào sản phẩm để xem chi tiết mô hình 3D tương tác. Xoay, phóng to để
+                trải nghiệm từng chi tiết.</p>
+
+            <!-- Product Grid (populated by JS) -->
+            <div class="product-grid" id="product-grid"></div>
+        </div>
+    </section>
+
+    <!-- 3D Detail Modal -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close" aria-label="Đóng">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="modal-3d-viewer" id="modal-canvas-container">
+                <div class="loader" id="modal-loader">
+                    <div class="loader-spinner"></div>
+                    <span>Đang tải 3D...</span>
+                </div>
+            </div>
+            <div class="modal-info">
+                <p class="modal-category" id="modal-category"></p>
+                <h3 id="modal-title"></h3>
+                <p class="modal-material" id="modal-material"></p>
+                <p class="modal-description" id="modal-description"></p>
+                <div class="modal-actions">
+                    <a href="#booking" class="btn btn-gold" id="modal-book-btn">Đặt thiết kế này</a>
+                </div>
+                <p class="modal-hint">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="1.5">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                    </svg>
+                    Chạm & kéo để xoay mô hình
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking">
+        <div class="container">
+            <div class="booking-header">
+                <p class="section-eyebrow">Liên Hệ</p>
+                <h2 class="section-title">Đặt lịch hẹn <em>riêng tư</em></h2>
+                <p class="section-subtitle">Hãy để chúng tôi lắng nghe câu chuyện của bạn. Đặt lịch tại studio hoặc qua
+                    video call để bắt đầu hành trình tạo ra món trang sức dành riêng cho bạn.</p>
+            </div>
+
+            <div class="booking-grid">
+                <div class="booking-info">
+                    <div class="contact-methods">
+                        <div class="method">
+                            <div class="method-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                    <circle cx="12" cy="10" r="3" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Địa chỉ Studio</h4>
+                                <p>127/15 Hoàng Diệu 2, P.Linh Xuân, Quận.Thủ Đức, TPHCM</p>
+                            </div>
+                        </div>
+                        <div class="method">
+                            <div class="method-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <polyline points="12 6 12 12 16 14" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Giờ mở cửa</h4>
+                                <p>Thứ 3 — Chủ nhật: 10:00 – 19:00</p>
+                            </div>
+                        </div>
+                        <div class="method">
+                            <div class="method-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h4>Liên hệ</h4>
+                                <p>hello@mafren.vn · 0900 123 456</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="booking-form-wrapper">
+                    <form id="booking-form" class="booking-form">
+                        <div class="form-group">
+                            <label for="name">Họ và tên</label>
+                            <input type="text" id="name" required placeholder="Nhập tên của bạn">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Số điện thoại</label>
+                            <input type="tel" id="phone" required placeholder="Nhập số điện thoại">
+                        </div>
+                        <div class="form-group">
+                            <label for="service">Dịch vụ</label>
+                            <select id="service" required>
+                                <option value="">Chọn dịch vụ</option>
+                                <option value="custom">Tư vấn thiết kế theo yêu cầu</option>
+                                <option value="sizing">Đo ni / Thử size trực tiếp</option>
+                                <option value="care">Bảo hành / Đánh sáng bạc</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label for="date">Ngày</label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="form-group half">
+                                <label for="time">Giờ</label>
+                                <input type="time" id="time" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">Ghi chú</label>
+                            <textarea id="notes" rows="3" placeholder="Chia sẻ thêm về ý tưởng của bạn..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-gold submit-btn">Gửi yêu cầu đặt lịch</button>
+                        <div class="form-success" id="form-success" style="display: none;">
+                            ✓ Cảm ơn bạn! Yêu cầu đặt lịch đã được gửi. Mafren sẽ liên hệ xác nhận sớm nhất.
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-top">
+            <div class="container footer-grid">
+                <div class="footer-brand">
+                    <h2>MAFREN</h2>
+                    <p class="footer-tagline">Khác biệt từ sự tối giản.</p>
+                </div>
+                <div class="footer-nav">
+                    <h4>Điều hướng</h4>
+                    <a href="#home">Trang chủ</a>
+                    <a href="#about">Giới thiệu</a>
+                    <a href="#showcase">Sản phẩm 3D</a>
+                    <a href="#booking">Đặt lịch hẹn</a>
+                </div>
+                <div class="footer-contact">
+                    <h4>Liên hệ</h4>
+                    <p>hello@mafren.vn</p>
+                    <p>0900 123 456</p>
+                    <p>Quận. Thủ Đức, TPHCM</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 Mafren Jewelry Atelier. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Three.js Dependencies via Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+            }
+        }
+    </script>
+    <!-- App Scripts -->
+    <script src="./js/app.js"></script>
+    <script type="module" src="./js/product-grid.js"></script>
+</body>
+
+</html>
