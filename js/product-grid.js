@@ -1,6 +1,6 @@
 // ============================================
 // PRODUCT GRID + 3D VIEWER — Mafren Jewelry Atelier
-// 6 GLB models — HDRI Studio Lighting
+// 11 GLB models — HDRI Studio Lighting
 // ============================================
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -15,63 +15,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const PRODUCTS = [
         {
             id: 1,
-            name: 'Lion Head Ring',
+            name: 'MF Rectangle',
             category: 'ring',
             categoryLabel: 'Nhẫn',
             material: 'Bạc 925',
             materialType: 'silver',
-            desc: 'Nhẫn đầu sư tử thiết kế độc bản — mô hình 3D chi tiết.',
-            modelUrl: './public/models/lion_head_ring.glb'
+            desc: 'Nhẫn MF Rectangle — thiết kế độc bản, chế tác thủ công tinh xảo.',
+            modelUrl: './public/models/mf_rectangle.glb',
+            topView: true
         },
         {
             id: 2,
-            name: 'Crab Legs Ring',
+            name: 'Mafren Logo Signet',
             category: 'ring',
             categoryLabel: 'Nhẫn',
             material: 'Bạc 925',
             materialType: 'silver',
-            desc: 'Nhẫn chân cua thiết kế độc bản — mô hình 3D chi tiết.',
-            modelUrl: './public/models/crab_legs.glb'
+            desc: 'Nhẫn signet khắc logo Mafren — thiết kế độc bản, chế tác thủ công tinh xảo.',
+            modelUrl: './public/models/mafren_logo_signet.glb',
+            topView: true
         },
         {
             id: 3,
-            name: 'Mẫu trang sức 1',
+            name: 'Mafren Signet 2',
             category: 'jewelry',
             categoryLabel: 'Trang sức',
-            material: 'Vàng 18K',
-            materialType: 'gold',
-            desc: 'Trang sức vàng thiết kế độc bản — chế tác thủ công tinh xảo.',
-            modelUrl: './public/models/1.glb'
+            material: 'Bạc 925',
+            materialType: 'silver',
+            desc: 'Trang sức thiết kế độc bản — chế tác thủ công tinh xảo.',
+            modelUrl: './public/models/body_05.glb',
+            topView: true
         },
         {
             id: 4,
-            name: 'Mẫu trang sức 2',
-            category: 'jewelry',
-            categoryLabel: 'Trang sức',
+            name: 'Mafren Logo Earring',
+            category: 'earring',
+            categoryLabel: 'Bông tai',
             material: 'Bạc 925',
             materialType: 'silver',
-            desc: 'Trang sức thiết kế độc bản — chế tác thủ công tinh xảo.',
-            modelUrl: './public/models/2.glb'
+            desc: 'Bông tai logo Mafren 8mm — thiết kế độc bản, chế tác thủ công tinh xảo.',
+            modelUrls: ['./public/models/earring_body_02.glb', './public/models/earring_body_04.glb'],
+            topView: true
         },
         {
             id: 5,
-            name: 'Mẫu trang sức 3',
+            name: 'Stamps Tẩu Thuốc',
             category: 'jewelry',
             categoryLabel: 'Trang sức',
             material: 'Bạc 925',
             materialType: 'silver',
             desc: 'Trang sức thiết kế độc bản — chế tác thủ công tinh xảo.',
-            modelUrl: './public/models/3.glb'
-        },
-        {
-            id: 6,
-            name: 'Mẫu trang sức 4',
-            category: 'jewelry',
-            categoryLabel: 'Trang sức',
-            material: 'Vàng 18K',
-            materialType: 'gold',
-            desc: 'Trang sức vàng thiết kế độc bản — chế tác thủ công tinh xảo.',
-            modelUrl: './public/models/4.glb'
+            modelUrl: './public/models/body_03.glb',
+            zoomScale: 2.5
         },
     ];
 
@@ -201,7 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
         scene.environment = envMap;
 
         const camera = new THREE.PerspectiveCamera(30, w / h, 0.1, 100);
-        camera.position.set(0, 3, 10);
+        // Top-down angle for signet rings to show the logo face
+        if (product.topView) {
+            camera.position.set(0, 8, 5);
+        } else {
+            camera.position.set(0, 3, 10);
+        }
         camera.lookAt(0, 0, 0);
 
         // Lighting
@@ -225,54 +225,58 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { threshold: 0.1 });
         visibilityObserver.observe(container);
 
-        // Load GLB
-        gltfLoader.load(product.modelUrl, (gltf) => {
-            const model = gltf.scene;
-            modelRef = model;
+        // Load GLB(s)
+        const urls = product.modelUrls || [product.modelUrl];
+        const group = new THREE.Group();
+        let loaded = 0;
 
-            model.traverse((child) => {
-                if (child.isMesh) {
-                    child.material = getMaterial(product);
+        urls.forEach((url) => {
+            gltfLoader.load(url, (gltf) => {
+                const model = gltf.scene;
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material = getMaterial(product);
+                    }
+                });
+                group.add(model);
+                loaded++;
+
+                if (loaded === urls.length) {
+                    // Center and scale the whole group
+                    const box = new THREE.Box3().setFromObject(group);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = (product.zoomScale || 1.8) / maxDim;
+                    group.scale.multiplyScalar(scale);
+                    group.position.sub(center.multiplyScalar(scale));
+
+                    scene.add(group);
+                    modelRef = group;
+
+                    // Hide loader
+                    const loader = container.querySelector('.card-loader');
+                    if (loader) {
+                        loader.style.opacity = '0';
+                        setTimeout(() => { loader.style.display = 'none'; }, 400);
+                    }
+
+                    const animate = () => {
+                        animId = requestAnimationFrame(animate);
+                        if (modelRef && isVisible) {
+                            modelRef.rotation.y += 0.003;
+                        }
+                        renderer.render(scene, camera);
+                    };
+                    animate();
+                }
+            }, undefined, (err) => {
+                console.error('Failed to load GLB:', url, err);
+                const loader = container.querySelector('.card-loader');
+                if (loader) {
+                    loader.innerHTML = '<span style="color:#999;font-size:0.8rem;">Không tải được 3D</span>';
                 }
             });
-
-            // Center and scale
-            const box = new THREE.Box3().setFromObject(model);
-            const center = box.getCenter(new THREE.Vector3());
-            const size = box.getSize(new THREE.Vector3());
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const scale = 1.8 / maxDim;
-            model.scale.multiplyScalar(scale);
-            model.position.sub(center.multiplyScalar(scale));
-
-            scene.add(model);
-
-            // Hide loader
-            const loader = container.querySelector('.card-loader');
-            if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(() => { loader.style.display = 'none'; }, 400);
-            }
-
-            const animate = () => {
-                animId = requestAnimationFrame(animate);
-
-                if (modelRef) {
-                    if (isVisible) {
-                        // Slow continuous 360° rotation
-                        modelRef.rotation.y += 0.003;
-                    }
-                }
-
-                renderer.render(scene, camera);
-            };
-            animate();
-        }, undefined, (err) => {
-            console.error('Failed to load GLB:', product.modelUrl, err);
-            const loader = container.querySelector('.card-loader');
-            if (loader) {
-                loader.innerHTML = '<span style="color:#999;font-size:0.8rem;">Không tải được 3D</span>';
-            }
         });
 
         // Resize handler
@@ -425,52 +429,65 @@ document.addEventListener('DOMContentLoaded', () => {
         topLight.position.set(0, 8, 0); topLight.angle = Math.PI / 6; topLight.penumbra = 0.4;
         scene.add(topLight);
 
-        // Load GLB
-        gltfLoader.load(product.modelUrl, (gltf) => {
-            const model = gltf.scene;
+        // Load GLB(s)
+        const urls = product.modelUrls || [product.modelUrl];
+        const group = new THREE.Group();
+        let loaded = 0;
 
-            // Apply material based on product type
-            model.traverse((child) => {
-                if (child.isMesh) {
-                    child.material = getMaterial(product);
+        urls.forEach((url) => {
+            gltfLoader.load(url, (gltf) => {
+                const model = gltf.scene;
+                model.traverse((child) => {
+                    if (child.isMesh) {
+                        child.material = getMaterial(product);
+                    }
+                });
+                group.add(model);
+                loaded++;
+
+                if (loaded === urls.length) {
+                    // Center and scale the whole group
+                    const box = new THREE.Box3().setFromObject(group);
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const scale = (product.zoomScale || 2.2) / maxDim;
+                    group.scale.multiplyScalar(scale);
+                    group.position.sub(center.multiplyScalar(scale));
+
+                    scene.add(group);
+
+                    // Top-down angle for signet rings to show the logo face
+                    if (product.topView) {
+                        camera.position.set(0, 9, 5);
+                    } else {
+                        camera.position.set(0, 3.5, 10);
+                    }
+                    camera.lookAt(0, 0, 0);
+
+                    // Hide loader
+                    if (modalLoader) {
+                        setTimeout(() => {
+                            modalLoader.style.opacity = '0';
+                            setTimeout(() => { modalLoader.style.display = 'none'; }, 400);
+                        }, 300);
+                    }
+
+                    const animate = () => {
+                        modalAnimId = requestAnimationFrame(animate);
+                        controls.update();
+                        modalRenderer.render(scene, camera);
+                    };
+                    animate();
+
+                    controls.addEventListener('start', () => { controls.autoRotate = false; });
+                }
+            }, undefined, (err) => {
+                console.error('Failed to load GLB in modal:', err);
+                if (modalLoader) {
+                    modalLoader.innerHTML = '<span style="color:#999;">Không tải được mô hình 3D</span>';
                 }
             });
-
-            // Center and scale
-            const box = new THREE.Box3().setFromObject(model);
-            const center = box.getCenter(new THREE.Vector3());
-            const size = box.getSize(new THREE.Vector3());
-            const maxDim = Math.max(size.x, size.y, size.z);
-            const scale = 2.2 / maxDim;
-            model.scale.multiplyScalar(scale);
-            model.position.sub(center.multiplyScalar(scale));
-
-            scene.add(model);
-
-            camera.position.set(0, 3.5, 10);
-            camera.lookAt(0, 0, 0);
-
-            // Hide loader
-            if (modalLoader) {
-                setTimeout(() => {
-                    modalLoader.style.opacity = '0';
-                    setTimeout(() => { modalLoader.style.display = 'none'; }, 400);
-                }, 300);
-            }
-
-            const animate = () => {
-                modalAnimId = requestAnimationFrame(animate);
-                controls.update();
-                modalRenderer.render(scene, camera);
-            };
-            animate();
-
-            controls.addEventListener('start', () => { controls.autoRotate = false; });
-        }, undefined, (err) => {
-            console.error('Failed to load GLB in modal:', err);
-            if (modalLoader) {
-                modalLoader.innerHTML = '<span style="color:#999;">Không tải được mô hình 3D</span>';
-            }
         });
 
         modalResizeHandler = () => {
