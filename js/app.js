@@ -1,4 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Force autoplay video on mobile
+    const heroVideo = document.querySelector('.hero-video-bg');
+    if (heroVideo) {
+        heroVideo.muted = true;
+        heroVideo.setAttribute('muted', '');
+        heroVideo.setAttribute('playsinline', '');
+        const playPromise = heroVideo.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(() => {
+                // Retry on user interaction
+                const playOnInteract = () => {
+                    heroVideo.play();
+                    document.removeEventListener('touchstart', playOnInteract);
+                    document.removeEventListener('click', playOnInteract);
+                    document.removeEventListener('scroll', playOnInteract);
+                };
+                document.addEventListener('touchstart', playOnInteract, { once: true });
+                document.addEventListener('click', playOnInteract, { once: true });
+                document.addEventListener('scroll', playOnInteract, { once: true });
+            });
+        }
+    }
+
     // Navbar Scroll Effect
     const navbar = document.getElementById('navbar');
     const heroSection = document.getElementById('home');

@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cardViewers.forEach(viewer => {
             if (viewer.animId) cancelAnimationFrame(viewer.animId);
             if (viewer.resizeObserver) viewer.resizeObserver.disconnect();
-            if (viewer.controls) viewer.controls.dispose();
+            if (viewer.visibilityObserver) viewer.visibilityObserver.disconnect();
             if (viewer.renderer) {
                 viewer.renderer.dispose();
                 const canvas = viewer.renderer.domElement;
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
         camera.position.set(0, 3, 10);
         camera.lookAt(0, 0, 0);
 
-        // Lighting — subtle fill alongside HDRI
+        // Lighting
         scene.add(new THREE.AmbientLight(0xffffff, 0.3));
         const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
         keyLight.position.set(3, 4, 5);
@@ -213,22 +213,23 @@ document.addEventListener('DOMContentLoaded', () => {
         fillLight.position.set(-3, 2, -3);
         scene.add(fillLight);
 
-        // Controls for card (limited)
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.enablePan = false;
-        controls.enableZoom = false;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 1.5;
-
         let animId = null;
+        let modelRef = null;
+        let isVisible = false;
+
+        // Visibility observer - pause when off screen
+        const visibilityObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                isVisible = entry.isIntersecting;
+            });
+        }, { threshold: 0.1 });
+        visibilityObserver.observe(container);
 
         // Load GLB
         gltfLoader.load(product.modelUrl, (gltf) => {
             const model = gltf.scene;
+            modelRef = model;
 
-            // Apply material based on product type
             model.traverse((child) => {
                 if (child.isMesh) {
                     child.material = getMaterial(product);
@@ -255,7 +256,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const animate = () => {
                 animId = requestAnimationFrame(animate);
-                controls.update();
+
+                if (modelRef) {
+                    if (isVisible) {
+                        // Slow continuous 360° rotation
+                        modelRef.rotation.y += 0.003;
+                    }
+                }
+
                 renderer.render(scene, camera);
             };
             animate();
@@ -278,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         resizeObserver.observe(container);
 
-        cardViewers.push({ renderer, animId, resizeObserver, controls });
+        cardViewers.push({ renderer, animId, resizeObserver, visibilityObserver });
     }
 
     // ==========================================

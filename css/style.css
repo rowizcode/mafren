@@ -45,6 +45,10 @@ html {
     font-size: 16px;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
@@ -479,27 +483,29 @@ body.scrolled-past-hero .menu-toggle .bar {
 
 /* ============= MARQUEE DIVIDER ============= */
 .marquee-divider {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 0;
+    border-top: 1px solid var(--accent);
+    border-bottom: 1px solid var(--accent);
+    padding: 1.5rem 0;
     overflow: hidden;
-    background: rgba(243, 237, 228, 0.6);
+    background: linear-gradient(135deg, rgba(139, 115, 74, 0.08) 0%, rgba(243, 237, 228, 0.6) 50%, rgba(139, 115, 74, 0.08) 100%);
 }
 
 .marquee-track {
     display: flex;
     white-space: nowrap;
-    animation: marquee 35s linear infinite;
+    animation: marquee 8s linear infinite;
+    will-change: transform;
 }
 
 .marquee-track span {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    font-weight: 400;
-    letter-spacing: 5px;
-    color: var(--text-tertiary);
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: var(--accent);
     flex-shrink: 0;
     text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(139, 115, 74, 0.3);
 }
 
 @keyframes marquee {
@@ -1141,12 +1147,38 @@ footer {
         top: 100%;
         left: 0;
         width: 100%;
-        background: rgba(250, 247, 242, 0.97);
+        background: rgba(10, 10, 20, 0.95);
         backdrop-filter: blur(24px);
         padding: 2rem;
         gap: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .nav-links.active a {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    .nav-links.active a:hover {
+        color: #ffffff;
+    }
+    .nav-links.active .btn-book {
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #ffffff !important;
+    }
+
+    body.scrolled-past-hero .nav-links.active {
+        background: rgba(250, 247, 242, 0.97);
         border-bottom: 1px solid var(--border);
     }
+    body.scrolled-past-hero .nav-links.active a {
+        color: var(--text-tertiary);
+    }
+    body.scrolled-past-hero .nav-links.active a:hover {
+        color: var(--text-primary);
+    }
+    body.scrolled-past-hero .nav-links.active .btn-book {
+        border-color: var(--border-hover);
+        color: var(--accent) !important;
+    }
+
     .menu-toggle { display: flex; }
 }
 
@@ -1157,24 +1189,70 @@ footer {
         gap: 3rem;
     }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 3rem; }
-    .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+    .product-grid { gap: 2rem; }
     .modal-content { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 768px) {
+    /* --- Hide cursor glow on mobile --- */
+    .cursor-glow { display: none; }
+
+    /* --- Marquee --- */
+    .marquee-track span { font-size: 0.6rem; letter-spacing: 3px; }
+    .marquee-track { animation-duration: 5s; }
+    .marquee-divider { padding: 0.8rem 0; }
+
+    /* --- Navbar --- */
     .navbar { padding: 1.2rem 1.5rem; }
     .navbar.scrolled { padding: 0.8rem 1.5rem; }
+    .logo-text { font-size: 1.2rem; letter-spacing: 6px; }
+    .logo-tagline { font-size: 0.4rem; letter-spacing: 3px; }
 
-    .hero { padding: 0 1.5rem; }
-    .hero-subtitle { font-size: 0.88rem; }
+    /* --- Hero --- */
+    .hero { padding: 0 1.2rem; }
+    .hero-title span { white-space: nowrap; }
+    .hero-title { font-size: clamp(1.8rem, 8vw, 3rem); letter-spacing: 0.06em; }
+    .hero-eyebrow { font-size: 0.5rem; letter-spacing: 3px; margin-bottom: 1rem; }
+    .hero-subtitle {
+        font-size: 0.72rem;
+        line-height: 1.9;
+        padding: 0 1rem;
+        max-width: 340px;
+        text-align: center;
+        letter-spacing: 0.02em;
+        margin-bottom: 2rem;
+    }
     .hero-actions { flex-direction: column; gap: 0.8rem; }
-    .hero-actions .btn { text-align: center; }
+    .hero-actions .btn { text-align: center; font-size: 0.6rem; padding: 0.9rem 2rem; }
     .hero-scroll-indicator { display: none; }
 
-    .about, .showcase, .booking { padding: 5rem 0; }
+    /* --- Global Section Text --- */
+    .section-eyebrow { font-size: 0.5rem; letter-spacing: 3px; margin-bottom: 0.6rem; }
+    .section-title { font-size: clamp(1.4rem, 6vw, 2rem); letter-spacing: 0.06em; margin-bottom: 0.8rem; }
+    .section-subtitle { font-size: 0.72rem; line-height: 1.7; padding: 0 0.3rem; max-width: 100%; }
+    .section-subtitle.center { margin-bottom: 2rem; }
 
-    .product-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+    /* --- About --- */
+    .about { padding: 4rem 0; }
+    .about-header { margin-bottom: 2.5rem; }
+    .about-lead { font-size: 0.85rem; line-height: 1.6; }
+    .about-text p { font-size: 0.78rem; line-height: 1.8; }
+    .feature-card { padding: 1.5rem; }
+    .feature-card h3 { font-size: 0.85rem; }
+    .feature-card p { font-size: 0.72rem; }
+    .feature-number { font-size: 1.5rem; }
 
+    /* --- Showcase / Products --- */
+    .showcase { padding: 4rem 0 5rem; }
+    .product-grid { gap: 1.2rem; }
+    .product-card { width: 100%; min-width: unset; }
+    .card-preview { min-height: 280px; }
+    .card-info { padding: 0.8rem; }
+    .card-name { font-size: 0.8rem; }
+    .card-category { font-size: 0.5rem; }
+    .card-material { font-size: 0.7rem; }
+
+    /* --- Modal --- */
     .modal-content {
         width: 96vw;
         height: 90vh;
@@ -1183,15 +1261,37 @@ footer {
         grid-template-rows: 1.2fr 1fr;
     }
     .modal-info {
-        padding: 2rem;
+        padding: 1.5rem;
         border-left: none;
         border-top: 1px solid var(--border);
         overflow-y: auto;
     }
-    .modal-info h3 { font-size: 1.5rem; }
+    .modal-info h3 { font-size: 1.3rem; }
+    .modal-description { font-size: 0.75rem; }
+    .modal-material { font-size: 0.72rem; }
+    .modal-category { font-size: 0.5rem; }
+    .modal-hint { font-size: 0.55rem; }
 
+    /* --- Booking --- */
+    .booking { padding: 4rem 0; }
+    .booking-header { margin-bottom: 2.5rem; }
+    .booking-header .section-subtitle { font-size: 0.72rem; }
+    .booking-form { padding: 1.5rem; }
+    .form-group label { font-size: 0.5rem; letter-spacing: 3px; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea { font-size: 0.8rem; padding: 0.8rem 1rem; }
     .form-row { flex-direction: column; gap: 0; }
-    .booking-form { padding: 2rem; }
+    .submit-btn { font-size: 0.6rem; padding: 1rem 2rem; }
+    .method h4 { font-size: 0.6rem; }
+    .method p { font-size: 0.75rem; }
+    .method-icon { width: 32px; height: 32px; }
 
+    /* --- Footer --- */
     .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .footer-brand h2 { font-size: 1.2rem; }
+    .footer-tagline { font-size: 0.7rem; }
+    .footer-nav a, .footer-contact p { font-size: 0.75rem; }
+    .footer-nav h4, .footer-contact h4 { font-size: 0.65rem; }
+    .footer-bottom p { font-size: 0.65rem; }
 }
