@@ -1,6 +1,6 @@
 // ============================================
 // PRODUCT GRID + 3D VIEWER — Mafren Jewelry Atelier
-// 11 GLB models — HDRI Studio Lighting
+// Protected GLB loading via XOR-encrypted .mfr assets
 // ============================================
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -10,7 +10,65 @@ import { EXRLoader } from 'three/addons/loaders/EXRLoader.js';
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
-    // PRODUCT DATA — 2 GLB models only
+    // ASSET PROTECTION — XOR Decryption
+    // ==========================================
+    const _k = [77,102,82,51,110,95,74,51,119,51,108,82,121,95,50,48,50,54,33,97,84,101,76,105,51,114];
+
+    // Encrypted asset manifest (hashed filenames)
+    const ASSET_MAP = {
+        'mf_rectangle':        '5ce13448e165.mfr',
+        'mafren_logo_signet':  'd50e377f0ad3.mfr',
+        'body_05':             '87b62de372d1.mfr',
+        'earring_body_02':     '747da5a89380.mfr',
+        'earring_body_04':     '5c0317f95370.mfr',
+        'body_03':             'a96aa43e38cf.mfr',
+    };
+
+    function _d(data) {
+        const r = new Uint8Array(data.length);
+        for (let i = 0; i < data.length; i++) {
+            r[i] = data[i] ^ _k[i % _k.length];
+        }
+        return r;
+    }
+
+    async function loadProtectedModel(assetKey) {
+        const filename = ASSET_MAP[assetKey];
+        if (!filename) {
+            throw new Error('Asset not found: ' + assetKey);
+        }
+        const response = await fetch('./public/assets/' + filename);
+        if (!response.ok) throw new Error('Failed to fetch asset');
+        const encryptedBuffer = await response.arrayBuffer();
+        const decrypted = _d(new Uint8Array(encryptedBuffer));
+        const blob = new Blob([decrypted], { type: 'model/gltf-binary' });
+        return URL.createObjectURL(blob);
+    }
+
+    // ==========================================
+    // ANTI-DOWNLOAD MEASURES
+    // ==========================================
+    // Disable right-click on entire document
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+
+    // Console deterrent
+    console.log(
+        '%c⚠️ CẢNH BÁO / WARNING',
+        'color: red; font-size: 24px; font-weight: bold;'
+    );
+    console.log(
+        '%cĐây là tính năng dành cho nhà phát triển. Nội dung 3D trên trang này được bảo vệ bản quyền. ' +
+        'Việc sao chép hoặc tải xuống trái phép là vi phạm pháp luật.\n\n' +
+        'This is a developer tool. 3D content on this site is copyrighted. ' +
+        'Unauthorized copying or downloading is a violation of law.',
+        'color: #888; font-size: 14px;'
+    );
+
+    // ==========================================
+    // PRODUCT DATA
     // ==========================================
     const PRODUCTS = [
         {
@@ -21,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
             material: 'Bạc 925',
             materialType: 'silver',
             desc: 'Nhẫn MF Rectangle — thiết kế độc bản, chế tác thủ công tinh xảo.',
-            modelUrl: './public/models/mf_rectangle.glb',
+            assetKey: 'mf_rectangle',
             topView: true
         },
         {
@@ -32,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             material: 'Bạc 925',
             materialType: 'silver',
             desc: 'Nhẫn signet khắc logo Mafren — thiết kế độc bản, chế tác thủ công tinh xảo.',
-            modelUrl: './public/models/mafren_logo_signet.glb',
+            assetKey: 'mafren_logo_signet',
             topView: true
         },
         {
@@ -43,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             material: 'Bạc 925',
             materialType: 'silver',
             desc: 'Trang sức thiết kế độc bản — chế tác thủ công tinh xảo.',
-            modelUrl: './public/models/body_05.glb',
+            assetKey: 'body_05',
             topView: true
         },
         {
@@ -54,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             material: 'Bạc 925',
             materialType: 'silver',
             desc: 'Bông tai logo Mafren 8mm — thiết kế độc bản, chế tác thủ công tinh xảo.',
-            modelUrls: ['./public/models/earring_body_02.glb', './public/models/earring_body_04.glb'],
+            assetKeys: ['earring_body_02', 'earring_body_04'],
             topView: true
         },
         {
@@ -65,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
             material: 'Bạc 925',
             materialType: 'silver',
             desc: 'Trang sức thiết kế độc bản — chế tác thủ công tinh xảo.',
-            modelUrl: './public/models/body_03.glb',
+            assetKey: 'body_03',
             zoomScale: 2.5
         },
     ];
@@ -102,10 +160,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // HDRI ENVIRONMENT MAP (EXR)
     // ==========================================
     const HDRI_PATH = './public/models/monochrome_studio_02_1k.exr';
-    let cachedRawTexture = null;  // Cache the raw EXR texture, NOT the PMREM result
-    let rawTexturePromise = null; // Prevent duplicate loads
+    let cachedRawTexture = null;
+    let rawTexturePromise = null;
 
-    // Load raw EXR texture once, cache for reuse across renderers
     function loadRawEXR() {
         if (rawTexturePromise) return rawTexturePromise;
 
@@ -123,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return rawTexturePromise;
     }
 
-    // Generate a PMREM env map for a specific renderer from the raw texture
     function loadHDRIEnvMap(renderer) {
         return loadRawEXR().then((rawTexture) => {
             const pmrem = new THREE.PMREMGenerator(renderer);
@@ -132,12 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pmrem.dispose();
             return envMap;
         }).catch(() => {
-            // Fallback: procedural env
             return createFallbackEnvMap(renderer);
         });
     }
 
-    // Fallback procedural env map (in case EXR fails to load)
     function createFallbackEnvMap(renderer) {
         const envCanvas = document.createElement('canvas');
         envCanvas.width = 512; envCanvas.height = 256;
@@ -162,9 +216,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
+    // PROTECTED GLB LOADER
+    // Loads encrypted .mfr file, decrypts in memory,
+    // creates Blob URL, loads via GLTFLoader, then revokes URL
+    // ==========================================
+    function loadProtectedGLB(assetKey, onLoad, onError) {
+        loadProtectedModel(assetKey).then((blobUrl) => {
+            gltfLoader.load(blobUrl, (gltf) => {
+                // Revoke blob URL immediately after parsing
+                URL.revokeObjectURL(blobUrl);
+                onLoad(gltf);
+            }, undefined, (err) => {
+                URL.revokeObjectURL(blobUrl);
+                if (onError) onError(err);
+            });
+        }).catch((err) => {
+            if (onError) onError(err);
+        });
+    }
+
+    // ==========================================
     // CARD PREVIEW — Live rotating 3D in each card
     // ==========================================
-    const cardViewers = []; // track active card renderers for cleanup
+    const cardViewers = [];
 
     function cleanupCardViewers() {
         cardViewers.forEach(viewer => {
@@ -196,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
         scene.environment = envMap;
 
         const camera = new THREE.PerspectiveCamera(30, w / h, 0.1, 100);
-        // Top-down angle for signet rings to show the logo face
         if (product.topView) {
             camera.position.set(0, 8, 5);
         } else {
@@ -217,7 +290,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let modelRef = null;
         let isVisible = false;
 
-        // Visibility observer - pause when off screen
         const visibilityObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 isVisible = entry.isIntersecting;
@@ -225,13 +297,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { threshold: 0.1 });
         visibilityObserver.observe(container);
 
-        // Load GLB(s)
-        const urls = product.modelUrls || [product.modelUrl];
+        // Load encrypted GLB(s)
+        const keys = product.assetKeys || [product.assetKey];
         const group = new THREE.Group();
         let loaded = 0;
 
-        urls.forEach((url) => {
-            gltfLoader.load(url, (gltf) => {
+        keys.forEach((assetKey) => {
+            loadProtectedGLB(assetKey, (gltf) => {
                 const model = gltf.scene;
                 model.traverse((child) => {
                     if (child.isMesh) {
@@ -241,8 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 group.add(model);
                 loaded++;
 
-                if (loaded === urls.length) {
-                    // Center and scale the whole group
+                if (loaded === keys.length) {
                     const box = new THREE.Box3().setFromObject(group);
                     const center = box.getCenter(new THREE.Vector3());
                     const size = box.getSize(new THREE.Vector3());
@@ -254,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     scene.add(group);
                     modelRef = group;
 
-                    // Hide loader
                     const loader = container.querySelector('.card-loader');
                     if (loader) {
                         loader.style.opacity = '0';
@@ -270,8 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                     animate();
                 }
-            }, undefined, (err) => {
-                console.error('Failed to load GLB:', url, err);
+            }, (err) => {
+                console.error('Failed to load protected GLB:', assetKey, err);
                 const loader = container.querySelector('.card-loader');
                 if (loader) {
                     loader.innerHTML = '<span style="color:#999;font-size:0.8rem;">Không tải được 3D</span>';
@@ -279,7 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Resize handler
         const resizeObserver = new ResizeObserver(() => {
             const nw = container.clientWidth;
             const nh = container.clientHeight;
@@ -327,7 +396,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.addEventListener('click', () => openModal(product));
             gridContainer.appendChild(card);
 
-            // Create live 3D viewer in the card
             requestAnimationFrame(() => {
                 const previewContainer = document.getElementById(`card-preview-${product.id}`);
                 if (previewContainer) {
@@ -417,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
         controls.autoRotate = true;
         controls.autoRotateSpeed = 2;
 
-        // Lighting — subtle accents alongside HDRI
+        // Lighting
         scene.add(new THREE.AmbientLight(0xffffff, 0.25));
         const keyLight = new THREE.DirectionalLight(0xfffaf0, 1.5);
         keyLight.position.set(5, 6, 5); scene.add(keyLight);
@@ -429,13 +497,13 @@ document.addEventListener('DOMContentLoaded', () => {
         topLight.position.set(0, 8, 0); topLight.angle = Math.PI / 6; topLight.penumbra = 0.4;
         scene.add(topLight);
 
-        // Load GLB(s)
-        const urls = product.modelUrls || [product.modelUrl];
+        // Load encrypted GLB(s)
+        const keys = product.assetKeys || [product.assetKey];
         const group = new THREE.Group();
         let loaded = 0;
 
-        urls.forEach((url) => {
-            gltfLoader.load(url, (gltf) => {
+        keys.forEach((assetKey) => {
+            loadProtectedGLB(assetKey, (gltf) => {
                 const model = gltf.scene;
                 model.traverse((child) => {
                     if (child.isMesh) {
@@ -445,8 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 group.add(model);
                 loaded++;
 
-                if (loaded === urls.length) {
-                    // Center and scale the whole group
+                if (loaded === keys.length) {
                     const box = new THREE.Box3().setFromObject(group);
                     const center = box.getCenter(new THREE.Vector3());
                     const size = box.getSize(new THREE.Vector3());
@@ -457,7 +524,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     scene.add(group);
 
-                    // Top-down angle for signet rings to show the logo face
                     if (product.topView) {
                         camera.position.set(0, 9, 5);
                     } else {
@@ -465,7 +531,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     camera.lookAt(0, 0, 0);
 
-                    // Hide loader
                     if (modalLoader) {
                         setTimeout(() => {
                             modalLoader.style.opacity = '0';
@@ -482,8 +547,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     controls.addEventListener('start', () => { controls.autoRotate = false; });
                 }
-            }, undefined, (err) => {
-                console.error('Failed to load GLB in modal:', err);
+            }, (err) => {
+                console.error('Failed to load protected GLB in modal:', err);
                 if (modalLoader) {
                     modalLoader.innerHTML = '<span style="color:#999;">Không tải được mô hình 3D</span>';
                 }
