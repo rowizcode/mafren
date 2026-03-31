@@ -22,6 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
         'earring_body_02':     '747da5a89380.mfr',
         'earring_body_04':     '5c0317f95370.mfr',
         'body_03':             'a96aa43e38cf.mfr',
+        // Clipmoney MFLux
+        'clipmoney_mflux':     'b7cc6fa29592.mfr',
+        // Rodpis Keychain
+        'rodpis_keychain':     'fc344399b213.mfr',
     };
 
     function _d(data) {
@@ -125,6 +129,30 @@ document.addEventListener('DOMContentLoaded', () => {
             desc: 'Trang sức thiết kế độc bản — chế tác thủ công tinh xảo.',
             assetKey: 'body_03',
             zoomScale: 2.5
+        },
+        {
+            id: 6,
+            name: 'Clipmoney MFLux',
+            category: 'jewelry',
+            categoryLabel: 'Phụ kiện',
+            material: 'Bạc 925',
+            materialType: 'silver',
+            desc: 'Kẹp tiền MFLux — thiết kế độc bản, chế tác thủ công tinh xảo.',
+            assetKey: 'clipmoney_mflux',
+            zoomScale: 2.8,
+            cameraPos: [3, 5, 6],
+        },
+        {
+            id: 7,
+            name: 'Rodpis Keychain MF',
+            category: 'jewelry',
+            categoryLabel: 'Phụ kiện',
+            material: 'Bạc 925',
+            materialType: 'silver',
+            desc: 'Móc khóa Rodpis MF — thiết kế độc bản, chế tác thủ công tinh xảo.',
+            assetKey: 'rodpis_keychain',
+            zoomScale: 2.8,
+            cameraPos: [2, 4, 7],
         },
     ];
 
@@ -270,7 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
         scene.environment = envMap;
 
         const camera = new THREE.PerspectiveCamera(30, w / h, 0.1, 100);
-        if (product.topView) {
+        if (product.cameraPos) {
+            camera.position.set(...product.cameraPos);
+        } else if (product.topView) {
             camera.position.set(0, 8, 5);
         } else {
             camera.position.set(0, 3, 10);
@@ -374,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'product-card featured-card';
             card.dataset.id = product.id;
-            card.style.animationDelay = `${index * 0.15}s`;
+            card.dataset.cursorLabel = 'Xem 3D';
 
             card.innerHTML = `
                 <div class="card-preview" id="card-preview-${product.id}">
@@ -424,6 +454,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        // Stop Lenis during modal
+        if (window.__mafrenLenis) window.__mafrenLenis.stop();
 
         if (modalLoader) {
             modalLoader.style.display = 'flex';
@@ -441,6 +473,8 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('active');
         document.body.style.overflow = '';
         cleanupModalRenderer();
+        // Re-enable Lenis smooth scroll
+        if (window.__mafrenLenis) window.__mafrenLenis.start();
     }
 
     function cleanupModalRenderer() {
@@ -524,7 +558,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     scene.add(group);
 
-                    if (product.topView) {
+                    if (product.cameraPos) {
+                        camera.position.set(product.cameraPos[0] * 1.2, product.cameraPos[1] * 1.2, product.cameraPos[2] * 1.2);
+                    } else if (product.topView) {
                         camera.position.set(0, 9, 5);
                     } else {
                         camera.position.set(0, 3.5, 10);

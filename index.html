@@ -20,8 +20,19 @@
 <body>
     <!-- Scanline CRT Overlay -->
     <div class="scanline-overlay"></div>
-    <!-- Cursor Glow Follower -->
-    <div class="cursor-glow" id="cursor-glow"></div>
+  <!-- Cursor Glow Follower -->
+  <div class="cursor-glow" id="cursor-glow"></div>
+  <!-- Custom Cursor Dot -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-dot-label" id="cursor-dot-label"></div>
+  <!-- Cursor outer magnetic ring -->
+  <div class="cursor-ring" id="cursor-ring"></div>
+  <!-- Horizontal Scroll Progress (top) -->
+  <div class="scroll-progress" id="scroll-progress">
+    <div class="scroll-progress-bar" id="scroll-progress-bar"></div>
+  </div>
+  <!-- Vertical Scroll Progress Line (left edge) -->
+  <div class="progress-line" id="progress-line"></div>
 
     <!-- Navbar -->
     <nav class="navbar" id="navbar">
@@ -47,6 +58,8 @@
             <source src="./public/video.mp4" type="video/mp4">
         </video>
         <div class="hero-bg-gradient"></div>
+        <!-- Giant brand overlay text (shed.design inspired) -->
+        <div class="hero-brand-giant" aria-hidden="true">MAFREN</div>
         <div class="hero-content">
             <p class="hero-eyebrow fade-in">JEWELRY DESIGN STUDIO</p>
             <h1 class="hero-title">
@@ -57,8 +70,7 @@
             <p class="hero-subtitle fade-in delay-4">Trang sức bạc độc bản được chế tác thủ công hoàn toàn theo yêu cầu,
                 dành cho những ai trân trọng sự riêng biệt.</p>
             <div class="hero-actions fade-in delay-5">
-                <a href="#showcase" class="btn btn-ghost">Khám phá 3D</a>
-                <a href="#booking" class="btn btn-gold">Đặt lịch hẹn</a>
+                <a href="#showcase" class="btn btn-ghost" data-cursor-label="EXPLORE">Khám phá 3D</a>
             </div>
         </div>
         <div class="hero-scroll-indicator fade-in delay-5">
@@ -111,11 +123,14 @@
         </div>
     </section>
 
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
     <!-- 3D Product Grid Section -->
     <section id="showcase" class="showcase">
         <div class="container">
             <p class="section-eyebrow center">Bộ Sưu Tập</p>
-            <h2 class="section-title center">Khám phá <em>sản phẩm</em></h2>
+            <h2 class="section-title center js-title-chars">Khám phá <em>sản phẩm</em></h2>
             <p class="section-subtitle center">Nhấn vào sản phẩm để xem chi tiết mô hình 3D tương tác. Xoay, phóng to để
                 trải nghiệm từng chi tiết.</p>
 
@@ -158,12 +173,15 @@
         </div>
     </div>
 
+    <!-- Section Divider -->
+    <div class="section-divider"></div>
+
     <!-- Booking Section -->
     <section id="booking" class="booking">
         <div class="container">
             <div class="booking-header">
                 <p class="section-eyebrow">Liên Hệ</p>
-                <h2 class="section-title">Đặt lịch hẹn <em>riêng tư</em></h2>
+                <h2 class="section-title js-title-chars">Đặt lịch hẹn <em>riêng tư</em></h2>
                 <p class="section-subtitle">Hãy để chúng tôi lắng nghe câu chuyện của bạn. Đặt lịch tại studio hoặc qua
                     video call để bắt đầu hành trình tạo ra món trang sức dành riêng cho bạn.</p>
             </div>
@@ -228,9 +246,9 @@
                             <label for="service">Dịch vụ</label>
                             <select id="service" required>
                                 <option value="">Chọn dịch vụ</option>
-                                <option value="custom">Tư vấn thiết kế theo yêu cầu</option>
-                                <option value="sizing">Đo ni / Thử size trực tiếp</option>
-                                <option value="care">Bảo hành / Đánh sáng bạc</option>
+                                <option value="Tu van thiet ke theo yeu cau">Tư vấn thiết kế theo yêu cầu</option>
+                                <option value="Do ni / Thu size truc tiep">Đo ni / Thử size trực tiếp</option>
+                                <option value="Bao hanh / Danh sang bac">Bảo hành / Đánh sáng bạc</option>
                             </select>
                         </div>
                         <div class="form-row">
@@ -287,8 +305,13 @@
         </div>
     </footer>
 
-    <!-- Three.js Dependencies via Import Map -->
-    <script type="importmap">
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Three.js Dependencies via Import Map -->
+  <script type="importmap">
         {
             "imports": {
                 "three": "https://unpkg.com/three@0.165.0/build/three.module.js",
@@ -296,9 +319,10 @@
             }
         }
     </script>
-    <!-- App Scripts -->
-    <script src="./js/app.js"></script>
-    <script type="module" src="./js/product-grid.js"></script>
+  <!-- App Scripts -->
+  <script src="./js/app.js"></script>
+  <script src="./js/animations.js"></script>
+  <script type="module" src="./js/product-grid.js"></script>
 </body>
 
 </html>
